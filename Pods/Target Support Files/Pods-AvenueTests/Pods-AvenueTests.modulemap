@@ -1,0 +1,6 @@
+framework module Pods_AvenueTests {
+  umbrella header "Pods-AvenueTests-umbrella.h"
+
+  export *
+  module * { export * }
+}
