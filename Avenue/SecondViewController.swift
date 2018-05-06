@@ -158,6 +158,10 @@ class SecondViewController: UIViewController, MKMapViewDelegate, UICollectionVie
     }
 }
 
+class MyPointAnnotation : MKPointAnnotation {
+    var pinTintColor: UIColor?
+}
+
 extension SecondViewController: HandleMapSearch {
     func addRadiusCircle(location: CLLocation){
         self.mapView.delegate = self
@@ -177,6 +181,19 @@ extension SecondViewController: HandleMapSearch {
         }
     }
     
+    func mapView(_ mapView: MKMapView, viewFor annotation: MKAnnotation) -> MKAnnotationView? {
+        var annotationView = mapView.dequeueReusableAnnotationView(withIdentifier: "myAnnotation") as? MKPinAnnotationView
+        if annotationView == nil {
+            annotationView = MKPinAnnotationView(annotation: annotation, reuseIdentifier: "myAnnotation")
+        } else {
+            annotationView?.annotation = annotation
+        }
+        if let annotation = annotation as? MyPointAnnotation {
+            annotationView?.pinTintColor = annotation.pinTintColor
+        }
+        return annotationView
+    }
+    
     func dropPinZoomIn(placemark:MKPlacemark){
         mapView.removeAnnotations(mapView.annotations)
         mapView.removeOverlays(mapView.overlays)
@@ -185,6 +202,8 @@ extension SecondViewController: HandleMapSearch {
         let annotation = MKPointAnnotation()
         annotation.coordinate = placemark.coordinate
         annotation.title = placemark.name
+        annotation.subtitle = "This is the location of your destination"
+//        annotation.pinTintColor = .black
         if let city = placemark.locality,
             let state = placemark.administrativeArea {
             annotation.subtitle = "\(city) \(state)"
@@ -194,6 +213,12 @@ extension SecondViewController: HandleMapSearch {
         let span = MKCoordinateSpanMake(0.05, 0.05)
         let region = MKCoordinateRegionMake(placemark.coordinate, span)
         mapView.setRegion(region, animated: true)
+    }
+}
+
+extension MKPinAnnotationView {
+    class func bluePinColor() -> UIColor {
+        return UIColor.blue
     }
 }
 
